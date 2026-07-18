@@ -2,8 +2,9 @@
 #define HOTCHLIB_API_BINARY_MAP_H
 
 #include "hlib/Array.h"
+#include "hlib/Pair.h"
 
-namespace cbpp {
+namespace hlib {
     /*
         Key-Value table based on the almighty binary search
 
@@ -12,29 +13,10 @@ namespace cbpp {
 
         key_t must have defined '==' and '<' operators
     */
-    template <typename key_t, typename value_t> 
+    
+    template <typename key_t, typename value_t, typename alloc_t = CDefaultAllocator<CPair<key_t, value_t>>>
     class CBinTable {
-        struct Pair {
-            key_t Key;
-            value_t Value;
-            
-            Pair() = default;
-            Pair(const key_t& k, const value_t& v) : Key(k), Value(v) {}
-            Pair(key_t&& k, value_t&& v) : Key(std::move(k)), Value(std::move(v)) {}
-
-            Pair(Pair&& other) : Key(std::move(other.Key)), Value(std::move(other.Value)) {}
-            
-            bool operator==(const Pair& other) const { return Key == other.Key; }
-            bool operator<(const Pair& other) const { return Key < other.Key; }
-
-            Pair& operator=(const Pair& other) {
-                Key = other.Key;
-                Value = other.Value;
-                return *this;
-            }
-        };
-        
-        CArray<Pair> m_aData;
+        CArray<CPair<key_t, value_t>, alloc_t> m_aData;
         
         int64_t BinarySearch(const key_t& Key) const {
             if (m_aData.Length() == 0) {
@@ -61,9 +43,10 @@ namespace cbpp {
         }
         
         public:
-            typedef value_t value_type;
-            typedef key_t key_type;
-            typedef CArray<Pair> pairs_t;
+            typedef value_t value_t;
+            typedef key_t key_t;
+            typedef CPair<key_t, value_t> pair_t;
+            typedef CArray<pair_t, alloc_t> pairs_t;
 
             CBinTable() = default;
 
@@ -74,7 +57,7 @@ namespace cbpp {
             // Insert a pair
             void Insert(const key_t& Key, const value_t& Value) {
                 if (m_aData.Length() == 0) {
-                    Pair Pair(std::move(Key), std::move(Value));
+                    CPair Pair(std::move(Key), std::move(Value));
                     m_aData.PushBack(std::move(Pair));
                     return;
                 }
@@ -86,7 +69,7 @@ namespace cbpp {
                 } else {
                     size_t iInsertPos = (size_t)(-iPos - 1);
 
-                    Pair Pair(std::move(Key), std::move(Value));
+                    CPair Pair(std::move(Key), std::move(Value));
 
                     m_aData.InsertAt(iInsertPos, std::move(Pair));
                 }
@@ -128,7 +111,7 @@ namespace cbpp {
             // Insert a pair
             void Insert(key_t&& Key, value_t&& Value) {
                 if (m_aData.Length() == 0) {
-                    Pair Pair(Key, Value);
+                    CPair Pair(Key, Value);
                     m_aData.PushBack(std::move(Pair));
                     return;
                 }
@@ -140,7 +123,7 @@ namespace cbpp {
                 } else {
                     size_t iInsertPos = (size_t)(-iPos - 1);
 
-                    Pair Pair(Key, Value);
+                    CPair Pair(Key, Value);
 
                     m_aData.InsertAt(iInsertPos, std::move(Pair));
                 }
@@ -187,7 +170,7 @@ namespace cbpp {
                     size_t iInsertPos = (size_t)(-iPos - 1);
 
                     value_t DefaultValue;
-                    Pair Pair(std::move(Key), std::move(DefaultValue));
+                    CPair Pair(std::move(Key), std::move(DefaultValue));
 
                     m_aData.InsertAt(iInsertPos, std::move(Pair));
                     return m_aData[iInsertPos].Value;
@@ -202,7 +185,7 @@ namespace cbpp {
                 }
                 return false;
             }
-
+            
             void Clear() {
                 m_aData.Clear();
             }
