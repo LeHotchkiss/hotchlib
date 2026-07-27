@@ -43,8 +43,6 @@ namespace hlib {
         }
         
         public:
-            typedef value_t value_t;
-            typedef key_t key_t;
             typedef CPair<key_t, value_t> pair_t;
             typedef CArray<pair_t, alloc_t> pairs_t;
 
@@ -57,8 +55,7 @@ namespace hlib {
             // Insert a pair
             void Insert(const key_t& Key, const value_t& Value) {
                 if (m_aData.Length() == 0) {
-                    CPair Pair(std::move(Key), std::move(Value));
-                    m_aData.PushBack(std::move(Pair));
+                    m_aData.PushBack( {std::move(Key), std::move(Value)} );
                     return;
                 }
                 
@@ -69,9 +66,7 @@ namespace hlib {
                 } else {
                     size_t iInsertPos = (size_t)(-iPos - 1);
 
-                    CPair Pair(std::move(Key), std::move(Value));
-
-                    m_aData.InsertAt(iInsertPos, std::move(Pair));
+                    m_aData.InsertAt(iInsertPos, {std::move(Key), std::move(Value)});
                 }
             }
             
@@ -111,8 +106,7 @@ namespace hlib {
             // Insert a pair
             void Insert(key_t&& Key, value_t&& Value) {
                 if (m_aData.Length() == 0) {
-                    CPair Pair(Key, Value);
-                    m_aData.PushBack(std::move(Pair));
+                    m_aData.PushBack( {std::move(Key), std::move(Value)} );
                     return;
                 }
                 
@@ -122,10 +116,7 @@ namespace hlib {
                     m_aData[(size_t)iPos].Value = std::move(Value);
                 } else {
                     size_t iInsertPos = (size_t)(-iPos - 1);
-
-                    CPair Pair(Key, Value);
-
-                    m_aData.InsertAt(iInsertPos, std::move(Pair));
+                    m_aData.InsertAt(iInsertPos, {std::move(Key), std::move(Value)});
                 }
             }
 
@@ -170,9 +161,8 @@ namespace hlib {
                     size_t iInsertPos = (size_t)(-iPos - 1);
 
                     value_t DefaultValue;
-                    CPair Pair(std::move(Key), std::move(DefaultValue));
 
-                    m_aData.InsertAt(iInsertPos, std::move(Pair));
+                    m_aData.InsertAt(iInsertPos, {std::move(Key), std::move(DefaultValue)});
                     return m_aData[iInsertPos].Value;
                 }
             }

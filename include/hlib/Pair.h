@@ -24,12 +24,12 @@ namespace hlib {
             return *this;
         }
 
-        CPair& operator=(CPair&& other) {
+        /*CPair& operator=(CPair&& other) {
             
 
             memset(&other, 0, sizeof(other));
             return *this;
-        }
+        }*/
     };
 }
 

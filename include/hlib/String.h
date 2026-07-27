@@ -2,7 +2,7 @@
 #define HOTCHLIB_API_STRING_API_H
 
 /*
-    CB++ string facilities.
+    String facilities.
     All data is expected to be encoded in UTF-8 or plain ASCII
 */
 
@@ -45,7 +45,7 @@ namespace hlib {
 
         Still NULL-terminated tho.
     */
-    template <typename alloc_t = CDefaultAllocator<char>> class CString {
+    template <typename alloc_t = CDefaultAllocator<unsigned char>> class CString {
         private:
             constexpr static const char* s_sNullString = "(null)";
             static char s_sDummy;
@@ -382,6 +382,26 @@ namespace hlib {
         1  - float 
     */
     //int32_t IsNumber(const char* sString);
+
+    #define HOTCHLIB_IMPLEMENTATION
+
+    #ifdef HOTCHLIB_IMPLEMENTATION
+
+    CConstString::CConstString() : m_sData(NULL) {}
+    CConstString::CConstString(const char* sData) : m_sData(sData) {}
+
+    bool CConstString::operator<(const char* sOther) const { return strcmp(m_sData, sOther) < 0; }
+    bool CConstString::operator==(const char* sOther) const { return strcmp(m_sData, sOther) == 0; }
+    bool CConstString::operator>(const char* sOther) const { return strcmp(m_sData, sOther) > 0; }
+
+    size_t CConstString::Length() const { return sizeof(m_sData) - 1; }
+
+    const char* CConstString::String() const { return m_sData; }
+    CConstString::operator cstring_t() const { return m_sData; }
+
+    CConstString::operator bool() const { return m_sData != NULL; }
+
+    #endif
 }
 
 #endif
