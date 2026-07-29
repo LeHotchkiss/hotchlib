@@ -7,9 +7,11 @@
 */
 
 #include <stddef.h>
+#include <string.h>
 #include <stdint.h>
 #include <time.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 #include "hlib/Allocator.h"
 
@@ -278,130 +280,24 @@ namespace hlib {
             operator bool() const { return this->IsValid(); }
     };
 
-    /*CString operator+(const CString& A, const CString& B);
-    CString operator+(const CString& A, const char* B);*/
-
-    /*
-        A reference that points to a substring in the source string.
-        Useful when working with a single big text to avoid allocations and copying.
-
-        Obviously, this class is useable until referenced string is valid.
-    */
-    /*class CSubString {
-        char *m_pStart = NULL, *m_pEnd = NULL;
-
-        public:
-            CSubString(CString&& sSource, size_t iPos, size_t iLength) = delete;
-
-            CSubString() = default;
-
-            CSubString(const CString& sSource, size_t iStart, size_t iLength);
-            CSubString(const char* sSource, size_t iStart, size_t iLength);
-
-            void Set(const char* sSource, size_t iStart, size_t iLength);
-
-            bool operator==(const CSubString& Other) const;
-            bool operator<(const CSubString& Other) const;
-            bool operator>(const CSubString& Other) const;
-
-            size_t Length() const;
-            
-            char* Start() const;
-            char* End() const;
-
-            // Get substring as a new string
-            CString Copy() const;
-
-            // Output the string to an external buffer, adding the null-terminator
-            size_t Bufferize(char* pBuffer, size_t iBuffSize) const;
-    };*/
-
-    /*
-        String pool.
-        All of them are stored continuously, the 
-        memory layout looks like this:
-
-        string1 \0 string2 \0 string3 \0
-
-        'indices' here are byte offsets from the beginning of
-        the pool.
-    */
-    class CStringPool {
-        char* m_pData = NULL;
-        size_t m_iCount = 0;
-        size_t m_iBytes = 0;
-
-        size_t PushString(const char* sData);
-
-        public:
-            CStringPool() = default;
-
-            const char* Data() const;
-
-            /*
-                Byte length of the allocated memory
-            */
-            size_t Size() const;
-
-            /*
-                Amount of strings in the pool
-            */
-            size_t Length() const;
-
-            size_t AddOrRef(const char* sData);
-            size_t Find(const char* sData) const;
-
-            const char* At(size_t iIndex) const;
-            const char* operator[](size_t iIndex) const;
-
-            void Clear();
-
-            ~CStringPool();
-    };
-
-    /*
-        Works like regular strcmp, but implemented for substrings
-    */
-    //int32_t SubStringCmp(const CSubString& sA, const CSubString& sB);
-
     /* 
         Get current time formatted in a string buffer.
         Returns the amount of bytes written
     */
-    //size_t StringFormatTime(char* sBuffer, size_t iLength, const char* sFormat);
+    size_t StringFormatTime(char* sBuffer, size_t iLength, const char* sFormat);
 
     /* 
         Get specified time formatted in a string buffer.
         Returns the amount of bytes written
     */
-    //size_t StringFormatTime(char* sBuffer, size_t iLength, const char* sFormat, time_t iTimer);
+    size_t StringFormatTime(char* sBuffer, size_t iLength, const char* sFormat, time_t iTimer);
 
     /*
         -1 - not a number
         0  - integer
         1  - float 
     */
-    //int32_t IsNumber(const char* sString);
-
-    #define HOTCHLIB_IMPLEMENTATION
-
-    #ifdef HOTCHLIB_IMPLEMENTATION
-
-    CConstString::CConstString() : m_sData(NULL) {}
-    CConstString::CConstString(const char* sData) : m_sData(sData) {}
-
-    bool CConstString::operator<(const char* sOther) const { return strcmp(m_sData, sOther) < 0; }
-    bool CConstString::operator==(const char* sOther) const { return strcmp(m_sData, sOther) == 0; }
-    bool CConstString::operator>(const char* sOther) const { return strcmp(m_sData, sOther) > 0; }
-
-    size_t CConstString::Length() const { return sizeof(m_sData) - 1; }
-
-    const char* CConstString::String() const { return m_sData; }
-    CConstString::operator cstring_t() const { return m_sData; }
-
-    CConstString::operator bool() const { return m_sData != NULL; }
-
-    #endif
+    int32_t IsNumber(const char* sString);
 }
 
 #endif

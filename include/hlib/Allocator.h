@@ -1,5 +1,5 @@
-#ifndef CBPP_ALLOCATOR_API_H
-#define CBPP_ALLOCATOR_API_H
+#ifndef HOTCHLIB_ALLOCATOR_API_H
+#define HOTCHLIB_ALLOCATOR_API_H
 
 #include <stddef.h>
 #include <stdlib.h>

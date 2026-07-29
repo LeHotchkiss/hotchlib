@@ -13,6 +13,8 @@
     #include "hlib/String.h"
 #endif
 
+#include "hlib/New.h"
+
 class CDum {
     int m_i = 0;
 
@@ -86,4 +88,7 @@ int main(int argc, char** argv) {
         }
     }
     #endif
+
+    CDum* pTestDum = hlib::New<CDum>(52);
+    hlib::Delete(pTestDum);
 }
