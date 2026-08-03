@@ -56,7 +56,7 @@ namespace hlib {
             size_t m_iLength = 0;
 
             void Nullify() {        
-                m_sData = alloc_t::Realloc(m_sData, 1);
+                m_sData = (char*)alloc_t::Realloc(m_sData, 1);
                 m_sData[0] = '\0';
                 
                 m_iLength = 0;
@@ -67,7 +67,7 @@ namespace hlib {
 
             CString(size_t iLength) {
                 m_iLength = iLength;
-                m_sData = alloc_t::Malloc(iLength+1);
+                m_sData = (char*)alloc_t::Malloc(iLength+1);
                 m_sData[iLength] = '\0';
             }
 
@@ -78,7 +78,7 @@ namespace hlib {
                 }
                 
                 m_iLength = strlen(sSource);
-                m_sData = alloc_t::Malloc(m_iLength + 1);
+                m_sData = (char*)alloc_t::Malloc(m_iLength + 1);
 
                 memcpy(m_sData, sSource, m_iLength);
                 m_sData[m_iLength] = '\0';
@@ -91,7 +91,7 @@ namespace hlib {
                 }
                 
                 m_iLength = Other.m_iLength;
-                m_sData = alloc_t::Malloc(m_iLength + 1);
+                m_sData = (char*)alloc_t::Malloc(m_iLength + 1);
                 memcpy(m_sData, Other.m_sData, m_iLength + 1);
             }
 
@@ -114,7 +114,7 @@ namespace hlib {
                 }
 
                 const size_t iLength = strlen(sOther);
-                m_sData = alloc_t::Realloc(m_sData, iLength + 1);
+                m_sData = (char*)alloc_t::Realloc(m_sData, iLength + 1);
                 memcpy(m_sData, sOther, iLength);
                 m_sData[iLength] = '\0';
 
@@ -133,7 +133,7 @@ namespace hlib {
                     return *this;
                 }
                 
-                m_sData = alloc_t::Realloc(m_sData, Other.m_iLength+1);
+                m_sData = (char*)alloc_t::Realloc(m_sData, Other.m_iLength+1);
                 memcpy(m_sData, Other.m_sData, Other.m_iLength+1);
 
                 m_iLength = Other.m_iLength;
@@ -184,7 +184,7 @@ namespace hlib {
             void Set(const CString& sData) {
                 m_iLength = sData.m_iLength;
 
-                m_sData = alloc_t::Realloc(m_sData, m_iLength+1);
+                m_sData = (char*)alloc_t::Realloc(m_sData, m_iLength+1);
                 m_sData[m_iLength] = '\0';
 
                 memcpy(m_sData, sData.String(), m_iLength);
@@ -193,7 +193,7 @@ namespace hlib {
             void Set(const char* sData) {
                 m_iLength = strlen(sData);
 
-                m_sData = alloc_t::Realloc(m_sData, m_iLength+1);
+                m_sData = (char*)alloc_t::Realloc(m_sData, m_iLength+1);
                 m_sData[m_iLength] = '\0';
 
                 memcpy(m_sData, sData, m_iLength);
@@ -201,7 +201,7 @@ namespace hlib {
 
             // Resize string to host iLength characters
             void Resize(size_t iLength) {
-                m_sData = alloc_t::Realloc(m_sData, iLength+1);
+                m_sData = (char*)alloc_t::Realloc(m_sData, iLength+1);
                 m_sData[iLength+1] = '\0';
                 m_iLength = iLength;
             }
@@ -244,7 +244,7 @@ namespace hlib {
                 const size_t iNewLength = m_iLength + Other.m_iLength + 1,
                             iOldLength = m_iLength;
 
-                m_sData = alloc_t::Realloc(m_sData, iNewLength);
+                m_sData = (char*)alloc_t::Realloc(m_sData, iNewLength);
                 memcpy(m_sData + iOldLength, Other.m_sData, Other.m_iLength);
 
                 m_iLength = iNewLength;
@@ -253,7 +253,7 @@ namespace hlib {
             }
 
             CString& operator+=(char iOther) {
-                m_sData = alloc_t::Realloc(m_sData, m_iLength + 1);
+                m_sData = (char*)alloc_t::Realloc(m_sData, m_iLength + 1);
                 m_sData[m_iLength] = iOther;
                 m_sData[m_iLength+1] = '\0';
 
