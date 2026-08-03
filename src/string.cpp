@@ -1,5 +1,7 @@
 #include "String.h"
 
+#include <stdlib.h>
+
 namespace hlib {
     CConstString::CConstString() : m_sData(NULL) {}
     CConstString::CConstString(const char* sData) : m_sData(sData) {}

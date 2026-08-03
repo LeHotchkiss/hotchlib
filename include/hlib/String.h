@@ -47,7 +47,7 @@ namespace hlib {
 
         Still NULL-terminated tho.
     */
-    template <typename alloc_t = CDefaultAllocator<unsigned char>> class CString {
+    template <typename alloc_t = CDefaultAllocator> class CString {
         private:
             constexpr static const char* s_sNullString = "(null)";
             static char s_sDummy;

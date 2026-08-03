@@ -4,6 +4,8 @@
 #include "hlib/Array.h"
 #include "hlib/Pair.h"
 
+#include <stdint.h>
+
 namespace hlib {
     /*
         Key-Value table based on the almighty binary search
@@ -14,7 +16,7 @@ namespace hlib {
         key_t must have defined '==' and '<' operators
     */
     
-    template <typename key_t, typename value_t, typename alloc_t = CDefaultAllocator<CPair<key_t, value_t>>>
+    template <typename key_t, typename value_t, typename alloc_t = CDefaultAllocator>
     class CBinTable {
         CArray<CPair<key_t, value_t>, alloc_t> m_aData;
         

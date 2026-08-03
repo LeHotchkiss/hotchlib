@@ -12,14 +12,14 @@ namespace hlib {
     /*
         Growable array
     */
-    template <typename value_t, typename alloc_t = CDefaultAllocator<value_t>> 
+    template <typename value_t, typename alloc_t = CDefaultAllocator> 
     class CArray {
         public:
             CArray() = default;
             
             CArray(const CArray<value_t>& aOther) : m_iAllocated(aOther.m_iAllocated), m_iSize(aOther.m_iSize) {
                 if (m_iAllocated > 0) {
-                    m_pMemory = alloc_t::Malloc(m_iAllocated);
+                    m_pMemory = (value_t*)alloc_t::Malloc(m_iAllocated * sizeof(value_t));
                     for (size_t i = 0; i < m_iSize; ++i) {
                         new (&m_pMemory[i]) value_t(aOther.m_pMemory[i]);
                     }
@@ -34,7 +34,7 @@ namespace hlib {
             }
 
             CArray(std::initializer_list<value_t> List) : m_iSize(List.size()), m_iAllocated(List.Size()) {
-                m_pMemory = alloc_t::Malloc(m_iSize);
+                m_pMemory = (value_t*)alloc_t::Malloc(m_iSize * sizeof(value_t));
 
                 int i = 0;
                 for (auto I = List.begin(); I != List.end(); ++I) {
@@ -45,7 +45,7 @@ namespace hlib {
             
             CArray(const value_t* pSource, size_t iSrcLen) : m_iSize(iSrcLen), m_iAllocated(iSrcLen) {
                 if (iSrcLen > 0) {
-                    m_pMemory = alloc_t::Malloc(iSrcLen);
+                    m_pMemory = (value_t*)alloc_t::Malloc(iSrcLen * sizeof(value_t));
                     for (size_t i = 0; i < iSrcLen; ++i) {
                         new (&m_pMemory[i]) value_t(pSource[i]);
                     }
@@ -54,7 +54,7 @@ namespace hlib {
             
             CArray(size_t iInitialCapacity) : m_iSize(0), m_iAllocated(iInitialCapacity) {
                 if (iInitialCapacity != 0) {
-                    m_pMemory = alloc_t::Malloc(iInitialCapacity);
+                    m_pMemory = (value_t*)alloc_t::Malloc(iInitialCapacity * sizeof(value_t));
                 }
             }
             
@@ -68,7 +68,7 @@ namespace hlib {
             CArray& operator=(const CArray<value_t>& aOther) {
                 Clear();
                 
-                m_pMemory = alloc_t::Realloc(m_pMemory, aOther.m_iAllocated);
+                m_pMemory = (value_t*)alloc_t::Realloc(m_pMemory, aOther.m_iAllocated * sizeof(value_t));
 
                 m_iAllocated = aOther.m_iAllocated;
                 m_iSize = aOther.m_iSize;
@@ -105,7 +105,7 @@ namespace hlib {
                 m_iSize = iLength;
 
                 if (iLength > 0) {
-                    m_pMemory = alloc_t::Malloc(iLength);
+                    m_pMemory = (value_t*)alloc_t::Malloc(iLength * sizeof(value_t));
                     for (size_t i = 0; i < iLength; ++i) {
                         new (&m_pMemory[i]) value_t(pData[i]);
                     }
@@ -140,7 +140,7 @@ namespace hlib {
             
             void Shrink() {
                 if(m_pMemory == NULL) { return; }
-                m_pMemory = alloc_t::Realloc(m_pMemory, m_iSize);
+                m_pMemory = (value_t*)alloc_t::Realloc(m_pMemory, m_iSize * sizeof(value_t));
             }
             
             void Clear() {
@@ -263,7 +263,7 @@ namespace hlib {
             
             void Reserve(size_t iNewCapacity) {
                 if (iNewCapacity > m_iAllocated) {
-                    m_pMemory = alloc_t::Realloc(m_pMemory, iNewCapacity);
+                    m_pMemory = (value_t*)alloc_t::Realloc(m_pMemory, iNewCapacity * sizeof(value_t));
                     m_iAllocated = iNewCapacity;
                 }
             }
