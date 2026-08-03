@@ -11,7 +11,7 @@ namespace hlib {
         An array with occupation awareness - unlike 
         CArray, this one can have holes
     */
-    template <typename value_t, typename alloc_t = CDefaultAllocator<value_t>> class CStorage {
+    template <typename value_t, typename alloc_t = CDefaultAllocator> class CStorage {
         enum class ENodeState {
             Free = 1,               // free nodes are marked '1' to allow fast checks for free ones with the !=0 operator
             Busy = 0

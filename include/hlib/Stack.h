@@ -4,7 +4,7 @@
 #include "hlib/Array.h"
 
 namespace hlib {
-    template <typename value_t, typename alloc_t = CDefaultAllocator<value_t>> class CStack {
+    template <typename value_t, typename alloc_t = CDefaultAllocator> class CStack {
         CArray<value_t, alloc_t> m_aData;
 
         public:
