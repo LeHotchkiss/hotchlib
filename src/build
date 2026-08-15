@@ -1,0 +1,33 @@
+#!/bin/sh
+
+NAME="libhotch.so"
+
+CC="g++"
+CC_ARGS="-std=c++17 -O2 -fno-exceptions -fPIC"
+LD_ARGS="-shared"
+
+FILES=$(find . -maxdepth 1 -name "*.cpp")
+
+rm -r ./.obj > /dev/null 2>&1
+mkdir -p ./.obj > /dev/null 2>&1
+
+for FILE in $FILES; do
+    echo $FILE
+	$CC $CC_FLAGS -c "$FILE" -o "./.obj/$FILE.o" -I"../include/hlib" -I"../src" -I"../include"
+
+	if [ $? -ne 0 ]; then
+        echo "Compilation failed"
+        exit 1
+    fi	
+done
+
+mkdir -p ./out > /dev/null 2>&1
+
+$CC $LD_ARGS $(find ./.obj -maxdepth 1 -name "*.o") -o "./out/$NAME"
+
+rm -r ./.obj > /dev/null 2>&1
+
+if [ $? -ne 0 ]; then
+	echo "Linking failed"
+	exit 1
+fi

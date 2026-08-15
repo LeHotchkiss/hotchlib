@@ -1,3 +1,4 @@
 libtest
 *.a
 *.so
+src/out/*
