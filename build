@@ -7,4 +7,4 @@ if [ $? -ne 0 ]; then
 fi
 cd ..
 
-mv ./src/out/libhotch.so ./libhotch.so
+mv ./src/out/libhotch.a ./libhotch.a

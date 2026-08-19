@@ -1,6 +1,6 @@
 #!/bin/sh
 
-NAME="libhotch.so"
+NAME="libhotch.a"
 
 CC="g++"
 CC_ARGS="-std=c++17 -O2 -fno-exceptions -fPIC"
@@ -23,7 +23,7 @@ done
 
 mkdir -p ./out > /dev/null 2>&1
 
-$CC $LD_ARGS $(find ./.obj -maxdepth 1 -name "*.o") -o "./out/$NAME"
+ar rcs ./out/$NAME $(find ./.obj -maxdepth 1 -name "*.o")
 
 rm -r ./.obj > /dev/null 2>&1
 
