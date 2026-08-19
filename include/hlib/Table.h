@@ -62,7 +62,7 @@ namespace hlib {
                 int64_t iPos = BinarySearch(Key);
                 
                 if (iPos >= 0) {
-                    this->Data()[(size_t)iPos].Value = Value;
+                    this->m_pMemory[(size_t)iPos].Value = Value;
                 } else {
                     size_t iInsertPos = (size_t)(-iPos - 1);
 

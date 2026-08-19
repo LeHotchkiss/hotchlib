@@ -56,7 +56,7 @@ namespace hlib {
             size_t m_iLength = 0;
 
             void Nullify() {        
-                m_sData = (char*)alloc_t::Realloc(m_sData, 1);
+                m_sData = (char*)t_pAlloc->Realloc(m_sData, 1);
                 m_sData[0] = '\0';
                 
                 m_iLength = 0;
