@@ -47,7 +47,7 @@ namespace hlib {
 
         Still NULL-terminated tho.
     */
-    template <typename alloc_t = CDefaultAllocator> class CString {
+    template <typename alloc_t, alloc_t* t_pAlloc> class CString {
         private:
             constexpr static const char* s_sNullString = "(null)";
             static char s_sDummy;
@@ -61,13 +61,25 @@ namespace hlib {
                 
                 m_iLength = 0;
             }
+
+            char* Malloc(size_t iSize) {
+                return (char*)t_pAlloc->Malloc(iSize, alignof(char));
+            }
+
+            char* Realloc(char* pData, size_t iSize) {
+                return (char*)t_pAlloc->Realloc(pData, iSize, alignof(char));
+            }
+
+            void Free(char* pData) {
+                t_pAlloc->Free(pData);
+            }
             
         public:
             CString() { this->Nullify(); }
 
             CString(size_t iLength) {
                 m_iLength = iLength;
-                m_sData = (char*)alloc_t::Malloc(iLength+1);
+                m_sData = this->Malloc(iLength+1);
                 m_sData[iLength] = '\0';
             }
 
@@ -78,7 +90,7 @@ namespace hlib {
                 }
                 
                 m_iLength = strlen(sSource);
-                m_sData = (char*)alloc_t::Malloc(m_iLength + 1);
+                m_sData = this->Malloc(m_iLength + 1);
 
                 memcpy(m_sData, sSource, m_iLength);
                 m_sData[m_iLength] = '\0';
@@ -91,10 +103,10 @@ namespace hlib {
                 }
                 
                 m_iLength = Other.m_iLength;
-                m_sData = (char*)alloc_t::Malloc(m_iLength + 1);
+                m_sData = this->Malloc(m_iLength + 1);
                 memcpy(m_sData, Other.m_sData, m_iLength + 1);
             }
-
+            
             CString(CString&& Other) : m_sData(Other.m_sData), m_iLength(Other.m_iLength) {
                 Other.m_sData = NULL;
                 Other.m_iLength = 0;
@@ -102,7 +114,7 @@ namespace hlib {
 
             ~CString() {
                 if (m_sData != NULL) {
-                    alloc_t::Free(m_sData);
+                    this->Free(m_sData);
                     m_sData = NULL;
                 }
             }
@@ -114,7 +126,7 @@ namespace hlib {
                 }
 
                 const size_t iLength = strlen(sOther);
-                m_sData = (char*)alloc_t::Realloc(m_sData, iLength + 1);
+                m_sData = this->Realloc(m_sData, iLength + 1);
                 memcpy(m_sData, sOther, iLength);
                 m_sData[iLength] = '\0';
 
@@ -122,7 +134,7 @@ namespace hlib {
                 
                 return *this;
             }
-
+            
             CString& operator=(const CString& Other) {
                 if (this == &Other) {
                     return *this;
@@ -133,7 +145,7 @@ namespace hlib {
                     return *this;
                 }
                 
-                m_sData = (char*)alloc_t::Realloc(m_sData, Other.m_iLength+1);
+                m_sData = this->Realloc(m_sData, Other.m_iLength+1);
                 memcpy(m_sData, Other.m_sData, Other.m_iLength+1);
 
                 m_iLength = Other.m_iLength;
@@ -147,7 +159,7 @@ namespace hlib {
                 }
                 
                 if (m_sData != NULL) {
-                    alloc_t::Free(m_sData);
+                    this->Free(m_sData);
                 }
                 
                 m_sData = Other.m_sData;
@@ -184,7 +196,7 @@ namespace hlib {
             void Set(const CString& sData) {
                 m_iLength = sData.m_iLength;
 
-                m_sData = (char*)alloc_t::Realloc(m_sData, m_iLength+1);
+                m_sData = this->Realloc(m_sData, m_iLength+1);
                 m_sData[m_iLength] = '\0';
 
                 memcpy(m_sData, sData.String(), m_iLength);
@@ -193,15 +205,19 @@ namespace hlib {
             void Set(const char* sData) {
                 m_iLength = strlen(sData);
 
-                m_sData = (char*)alloc_t::Realloc(m_sData, m_iLength+1);
+                m_sData = this->Realloc(m_sData, m_iLength+1);
                 m_sData[m_iLength] = '\0';
 
                 memcpy(m_sData, sData, m_iLength);
             }
 
-            // Resize string to host iLength characters
+            /* 
+                Resize string to host iLength characters.
+                NULL-terminator is added at the end and does
+                not occupy the reserved space
+            */
             void Resize(size_t iLength) {
-                m_sData = (char*)alloc_t::Realloc(m_sData, iLength+1);
+                m_sData = this->Realloc(m_sData, iLength+1);
                 m_sData[iLength+1] = '\0';
                 m_iLength = iLength;
             }
@@ -244,7 +260,7 @@ namespace hlib {
                 const size_t iNewLength = m_iLength + Other.m_iLength + 1,
                             iOldLength = m_iLength;
 
-                m_sData = (char*)alloc_t::Realloc(m_sData, iNewLength);
+                m_sData = this->Realloc(m_sData, iNewLength);
                 memcpy(m_sData + iOldLength, Other.m_sData, Other.m_iLength);
 
                 m_iLength = iNewLength;
@@ -253,7 +269,7 @@ namespace hlib {
             }
 
             CString& operator+=(char iOther) {
-                m_sData = (char*)alloc_t::Realloc(m_sData, m_iLength + 1);
+                m_sData = this->Realloc(m_sData, m_iLength + 1);
                 m_sData[m_iLength] = iOther;
                 m_sData[m_iLength+1] = '\0';
 

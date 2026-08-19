@@ -10,8 +10,10 @@ namespace hlib {
     /*
         An array with occupation awareness - unlike 
         CArray, this one can have holes
+
+        BUGGED RN, DONT USE UNTIL FIX
     */
-    template <typename value_t, typename alloc_t = CDefaultAllocator> class CStorage {
+    template <typename value_t, typename alloc_t = CDefaultAllocator, alloc_t* t_pAlloc> class CStorage {
         enum class ENodeState {
             Free = 1,               // free nodes are marked '1' to allow fast checks for free ones with the !=0 operator
             Busy = 0
@@ -71,7 +73,7 @@ namespace hlib {
             }
         };
 
-        CArray<Block, alloc_t> m_aBlocks;
+        CArray<Block, alloc_t, t_pAlloc> m_aBlocks;
 
         public:
             CStorage() = default;
@@ -157,6 +159,8 @@ namespace hlib {
                 }
             }
     };
+
+    template <typename value_t> using default_storage_t = CStorage<value_t, CDefaultAllocator, &g_defaultAlloc>;
 }
 
 #endif

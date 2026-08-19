@@ -4,12 +4,21 @@
 #include <stddef.h>
 
 namespace hlib {
-    class CDefaultAllocator {
+    class IAllocator {
         public:
-            static void* Malloc(size_t iBytes);
-            static void* Realloc(void* pData, size_t iNewLen);
-            static void Free(void* pData);
+            virtual void* Malloc(size_t iBytes, size_t iAlign = 16) = 0;
+            virtual void* Realloc(void* pData, size_t iBytes, size_t iAlign = 16) = 0;
+            virtual void Free(void* pData) = 0;
     };
+
+    class CDefaultAllocator final : public IAllocator {
+        public:
+            void* Malloc(size_t iBytes, size_t iAlign = 16) override;
+            void* Realloc(void* pData, size_t iBytes, size_t iAlign = 16) override;
+            void Free(void* pData) override;
+    };
+
+    extern CDefaultAllocator g_defaultAlloc;
 }
 
 #endif

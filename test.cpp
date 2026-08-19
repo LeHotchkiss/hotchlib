@@ -2,7 +2,8 @@
 #include <stdio.h>
 
 //#define TEST_CARRAY
-#define TEST_CBINTABLE
+//#define TEST_CBINTABLE
+#define TEST_CSTACK
 
 #ifdef TEST_CARRAY
     #include "hlib/Array.h"
@@ -13,38 +14,38 @@
     #include "hlib/String.h"
 #endif
 
+#ifdef TEST_CSTACK
+    #include "hlib/Stack.h"
+#endif
+
 #include "hlib/New.h"
 
 class CDum {
     int m_i = 0;
 
     public:
-        CDum() { puts("Dum is defaulted"); }
-        CDum(int i) : m_i(i) { printf("Dum is born as %d\n", i); }
-        CDum(const CDum& other) : m_i(other.m_i) { printf("Dum is born as %d from other dum\n", m_i); }
+        CDum() {  }
+        CDum(int i) : m_i(i) {  }
+        CDum(const CDum& other) : m_i(other.m_i) {  }
         CDum(CDum&& other) {
-            printf("Dum is moved!\n");
             m_i = other.m_i;
             memset(&other, 0, sizeof(other));
         }
 
         CDum& operator=(const CDum& other) {
             m_i = other.m_i;
-            printf("Dum is copied to %d\n\n", m_i);
             return *this;
         }
 
         CDum& operator=(CDum& other) {
             m_i = other.m_i;
             memset(&other, 0, sizeof(other));
-            printf("Dum is moved! to %d\n\n", m_i);
             return *this;
         }
 
         int GetValue() const { return m_i; }
 
         ~CDum() {
-            puts("Dum destruction!");
         }
 };
 
@@ -53,7 +54,7 @@ int main(int argc, char** argv) {
 
     #ifdef TEST_CARRAY
     {
-        hlib::CArray<CDum> testArray;
+        hlib::default_array_t<CDum> testArray;
         for(int i = 0; i < 10; i++) {
             testArray.PushBack(i);
         }
@@ -75,7 +76,7 @@ int main(int argc, char** argv) {
 
     #ifdef TEST_CBINTABLE
     {
-        hlib::CBinTable<hlib::CConstString, CDum> testTable;
+        hlib::default_table_t<hlib::CConstString, CDum> testTable;
 
         const char* aKeys[] = {
             "hello",
@@ -85,6 +86,27 @@ int main(int argc, char** argv) {
 
         for(int i = 0; i < sizeof(aKeys) / sizeof(aKeys[0]); i++) {
             testTable.Insert(aKeys[i], i*10);
+        }
+
+        for(int i = 0; i < testTable.Length(); i++) {
+            const hlib::CConstString key = testTable.IndexKey(i);
+            printf("'%s' = %d\n", key.String(), testTable[key].GetValue());
+        }
+    }
+    #endif
+
+    #ifdef TEST_CSTACK
+    {
+        hlib::default_stack_t<int> stackTest;
+
+        for(int i = 0; i < 20; i++) {
+            printf("> %d\n", i);
+            stackTest.Push(i);
+        }
+
+        for(int i = 0; i < 20; i++) {
+            printf("< %d\n", stackTest.Head());
+            stackTest.Pop();
         }
     }
     #endif

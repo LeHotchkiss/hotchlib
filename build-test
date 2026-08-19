@@ -1,0 +1,3 @@
+#!/bin/sh
+
+g++ -std=c++17 ./test.cpp -I"./include" -L"." -lhotch -o libtest
