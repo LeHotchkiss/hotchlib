@@ -14,6 +14,11 @@ namespace hlib {
         public:
             constexpr CStaticArray() = default;
 
+            template <typename... args_t>
+            constexpr CStaticArray(args_t&&... args) : m_aData{std::move(args)...} {
+                static_assert(sizeof...(args) == t_iLength, "Wrong number of static array arguments");
+            }
+            
             constexpr CStaticArray(const value_t& filler) {
                 for(size_t i = 0; i < t_iLength; i++) {
                     m_aData[i] = filler;

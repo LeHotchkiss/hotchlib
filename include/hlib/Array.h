@@ -5,6 +5,7 @@
 #include <initializer_list>
 #include <type_traits>
 #include <utility>
+#include <string.h>
 
 #include "hlib/Allocator.h"
 
