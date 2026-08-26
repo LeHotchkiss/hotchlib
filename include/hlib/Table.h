@@ -198,7 +198,7 @@ namespace hlib {
     };
 
     template <typename key_t, typename value_t>
-    using default_table_t = CBinTable<key_t, value_t, CDefaultAllocator, &g_defaultAlloc>;
+    using table_t = CBinTable<key_t, value_t, CDefaultAllocator, &g_defaultAlloc>;
 }
 
 #endif

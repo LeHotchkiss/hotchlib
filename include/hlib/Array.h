@@ -294,7 +294,8 @@ namespace hlib {
             }
     };
 
-    template <typename value_t> using default_array_t = CArray<value_t, CDefaultAllocator, &g_defaultAlloc>;
+    template <typename value_t> 
+    using array_t = CArray<value_t, CDefaultAllocator, &g_defaultAlloc>;
 }
 
 #endif

@@ -296,6 +296,8 @@ namespace hlib {
             operator bool() const { return this->IsValid(); }
     };
 
+    using string_t = CString<CDefaultAllocator, &g_defaultAlloc>;
+
     /* 
         Get current time formatted in a string buffer.
         Returns the amount of bytes written

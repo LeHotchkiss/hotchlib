@@ -3,7 +3,8 @@
 
 //#define TEST_CARRAY
 //#define TEST_CBINTABLE
-#define TEST_CSTACK
+//#define TEST_CSTACK
+#define TEST_STATIC_ARRAY
 
 #ifdef TEST_CARRAY
     #include "hlib/Array.h"
@@ -16,6 +17,10 @@
 
 #ifdef TEST_CSTACK
     #include "hlib/Stack.h"
+#endif
+
+#ifdef TEST_STATIC_ARRAY
+    #include "hlib/StaticArray.h"
 #endif
 
 #include "hlib/New.h"
@@ -54,7 +59,7 @@ int main(int argc, char** argv) {
 
     #ifdef TEST_CARRAY
     {
-        hlib::default_array_t<CDum> testArray;
+        hlib::array_t<CDum> testArray;
         for(int i = 0; i < 10; i++) {
             testArray.PushBack(i);
         }
@@ -76,7 +81,7 @@ int main(int argc, char** argv) {
 
     #ifdef TEST_CBINTABLE
     {
-        hlib::default_table_t<hlib::CConstString, CDum> testTable;
+        hlib::table_t<hlib::CConstString, CDum> testTable;
 
         const char* aKeys[] = {
             "hello",
@@ -97,7 +102,7 @@ int main(int argc, char** argv) {
 
     #ifdef TEST_CSTACK
     {
-        hlib::default_stack_t<int> stackTest;
+        hlib::stack_t<int> stackTest;
 
         for(int i = 0; i < 20; i++) {
             printf("> %d\n", i);
@@ -111,6 +116,12 @@ int main(int argc, char** argv) {
     }
     #endif
 
-    CDum* pTestDum = hlib::New<CDum>(52);
-    hlib::Delete(pTestDum);
+    #ifdef TEST_STATIC_ARRAY
+    {
+        hlib::static_array_t<int, 25> test(0);
+    }
+    #endif
+
+    /*CDum* pTestDum = hlib::New<CDum>(52);
+    hlib::Delete(pTestDum);*/
 }

@@ -53,7 +53,8 @@ namespace hlib {
             }
     };
 
-    template <typename value_t> using default_stack_t = CStack<value_t, CDefaultAllocator, &g_defaultAlloc>;
+    template <typename value_t> 
+    using stack_t = CStack<value_t, CDefaultAllocator, &g_defaultAlloc>;
 }
 
 #endif
