@@ -67,7 +67,7 @@ namespace hlib {
                 }
             }
             
-            CArray(size_t iInitialCapacity, IAllocator* pAlloc) : m_iSize(0), m_iAllocated(iInitialCapacity) {
+            CArray(size_t iInitialCapacity) : m_iSize(0), m_iAllocated(iInitialCapacity) {
                 if (iInitialCapacity != 0) {
                     m_pMemory = this->Malloc(iInitialCapacity);
                 }

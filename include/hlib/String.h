@@ -73,7 +73,26 @@ namespace hlib {
             void Free(char* pData) {
                 t_pAlloc->Free(pData);
             }
-            
+
+            void PushString(const char* sData, size_t iLen) {
+                const size_t iOldLength = m_iLength;
+                const size_t iNewLength = iOldLength + iLen;
+
+                m_sData = this->Realloc(
+                    m_sData,
+                    iNewLength + 1
+                );
+
+                memcpy(
+                    m_sData + iOldLength,
+                    sData,
+                    iLen
+                );
+
+                m_iLength = iNewLength;
+                m_sData[m_iLength] = '\0';
+            }
+
         public:
             CString() { this->Nullify(); }
 
@@ -217,7 +236,16 @@ namespace hlib {
                 not occupy the reserved space
             */
             void Resize(size_t iLength) {
+                if(iLength == m_iLength) {
+                    return;
+                }
+
                 m_sData = this->Realloc(m_sData, iLength+1);
+
+                if(iLength > m_iLength) {
+                    memset(m_sData + m_iLength, iLength-m_iLength, ' ');
+                }
+
                 m_sData[iLength+1] = '\0';
                 m_iLength = iLength;
             }
@@ -251,19 +279,15 @@ namespace hlib {
                 if(m_sData == NULL && sOther != NULL) { return false; }
                 return strcmp(m_sData, sOther) > 0;
             }
-            
-            CString& operator+=(const CString& Other) {
-                if (!Other.IsValid()) {
-                    return *this;
-                }
+
+            CString& operator+=(const char* pOther) {
+                this->PushString(pOther, strlen(pOther));
                 
-                const size_t iNewLength = m_iLength + Other.m_iLength + 1,
-                            iOldLength = m_iLength;
+                return *this;
+            }
 
-                m_sData = this->Realloc(m_sData, iNewLength);
-                memcpy(m_sData + iOldLength, Other.m_sData, Other.m_iLength);
-
-                m_iLength = iNewLength;
+            CString& operator+=(const CString& Other) {
+                this->PushString(Other.String(), Other.Length());
                 
                 return *this;
             }
@@ -277,18 +301,101 @@ namespace hlib {
                 
                 return *this;
             }
-
+            
             size_t Printv(const char* sFormat, va_list Args) {
+                va_list argsCopy;
+                va_copy(argsCopy, Args);
+
+                size_t iLen = vsnprintf(m_sData, 0, sFormat, argsCopy);
+
+                va_end(argsCopy);
+
+                this->Resize(iLen);
                 return vsnprintf(m_sData, m_iLength, sFormat, Args);
             }
             
             size_t Printf(const char* sFormat, ...) {
                 va_list Args;
                 va_start(Args, sFormat);
+
+                va_list argsCopy;
+                va_copy(argsCopy, Args);
+
+                size_t iLen = vsnprintf(m_sData, 0, sFormat, Args);
+
+                va_end(argsCopy);
+
+                this->Resize(iLen);
+
                 size_t iLn = vsnprintf(m_sData, m_iLength, sFormat, Args);
+
                 va_end(Args);
 
                 return iLn;
+            }
+
+            size_t PushFormattedv(const char* sFormat, va_list Args) {
+                va_list argsCopy;
+                va_copy(argsCopy, Args);
+
+                const size_t iLen = vsnprintf(NULL, 0, sFormat, argsCopy);
+
+                va_end(argsCopy);
+
+                m_sData = this->Realloc(
+                    m_sData,
+                    m_iLength + iLen + 1
+                );
+
+                vsnprintf(
+                    m_sData + m_iLength,
+                    iLen + 1,
+                    sFormat,
+                    Args
+                );
+
+                m_iLength += iLen;
+                m_sData[m_iLength] = '\0';
+
+                return iLen;
+            }
+            
+            size_t PushFormatted(const char* sFormat, ...) {
+                va_list args;
+                va_start(args, sFormat);
+
+                va_list argsCopy;
+                va_copy(argsCopy, args);
+
+                const size_t iLen = vsnprintf(NULL, 0, sFormat, argsCopy);
+
+                va_end(argsCopy);
+
+                char* newData = this->Realloc(
+                    m_sData,
+                    m_iLength + iLen + 1
+                );
+
+                if (!newData) {
+                    va_end(args);
+                    return 0;
+                }
+
+                m_sData = newData;
+
+                vsnprintf(
+                    m_sData + m_iLength,
+                    iLen + 1,
+                    sFormat,
+                    args
+                );
+
+                m_iLength += iLen;
+                m_sData[m_iLength] = '\0';
+
+                va_end(args);
+
+                return iLen;
             }
             
             operator cstring_t() const { return (const char*)m_sData; }

@@ -1,10 +1,11 @@
 #include <string.h>
 #include <stdio.h>
 
-//#define TEST_CARRAY
+#define TEST_CARRAY
 //#define TEST_CBINTABLE
 //#define TEST_CSTACK
-#define TEST_STATIC_ARRAY
+//#define TEST_STATIC_ARRAY
+#define TEST_CSTRING
 
 #ifdef TEST_CARRAY
     #include "hlib/Array.h"
@@ -21,6 +22,10 @@
 
 #ifdef TEST_STATIC_ARRAY
     #include "hlib/StaticArray.h"
+#endif
+
+#ifdef TEST_CSTRING
+    #include "hlib/String.h"
 #endif
 
 #include "hlib/New.h"
@@ -119,6 +124,21 @@ int main(int argc, char** argv) {
     #ifdef TEST_STATIC_ARRAY
     {
         hlib::static_array_t<int, 25> test(0);
+    }
+    #endif
+
+    #ifdef TEST_CSTRING
+    {
+        hlib::string_t test1 = "hello world!";
+
+        test1.PushFormatted(" %s:%d!!!", "addon", 67);
+
+        hlib::string_t test2;
+        test2 += "hello ";
+        test2 += "world!";
+
+        printf("Test 1:\n\t'%s'\n", test1.String());
+        printf("Test 2:\n\t'%s'\n", test2.String());
     }
     #endif
 
