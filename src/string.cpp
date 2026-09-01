@@ -3,19 +3,26 @@
 #include <stdlib.h>
 
 namespace hlib {
-    CConstString::CConstString() : m_sData(NULL) {}
-    CConstString::CConstString(const char* sData) : m_sData(sData) {}
+    constexpr CConstString::CConstString(const char* sData) : m_sData(sData) {}
 
-    bool CConstString::operator<(const char* sOther) const { return strcmp(m_sData, sOther) < 0; }
-    bool CConstString::operator==(const char* sOther) const { return strcmp(m_sData, sOther) == 0; }
-    bool CConstString::operator>(const char* sOther) const { return strcmp(m_sData, sOther) > 0; }
+    constexpr bool CConstString::operator<(const char* sOther) const { return StringCmp(m_sData, sOther) < 0; }
+    constexpr bool CConstString::operator==(const char* sOther) const { return StringCmp(m_sData, sOther) == 0; }
+    constexpr bool CConstString::operator>(const char* sOther) const { return StringCmp(m_sData, sOther) > 0; }
 
-    size_t CConstString::Length() const { return sizeof(m_sData) - 1; }
+    constexpr size_t CConstString::Length() const { return StringLen(m_sData); }
 
-    const char* CConstString::String() const { return m_sData; }
-    CConstString::operator cstring_t() const { return m_sData; }
+    constexpr const char* CConstString::String() const { return m_sData; }
+    constexpr CConstString::operator cstring_t() const { return m_sData; }
 
-    CConstString::operator bool() const { return m_sData != NULL; }
+    constexpr CConstString::operator bool() const { return m_sData != NULL; }
+
+    constexpr const char* CConstString::Find(const char* sSubstr) const {
+        return StringStr(m_sData, sSubstr);
+    }
+
+    constexpr const char* CConstString::Find(char iChar) const {
+        return StringChr(m_sData, iChar);
+    }
 }
 
 namespace hlib {

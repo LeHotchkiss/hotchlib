@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <string.h>
 
+#include <utility>
+
 namespace hlib {
     template <typename value_t, size_t t_iLength>
     class CStaticArray {

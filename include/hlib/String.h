@@ -19,25 +19,101 @@ namespace hlib {
     typedef const char* cstring_t;
 
     /*
+        Constexpr versions for some of <string.h> functions.
+        For non-constexpr usage better use standart calls.
+    */
+
+    constexpr void MemCopy(char* pDest, const char* pSource, size_t iLen) {
+        for(size_t i = 0; i < iLen; i++) {
+            *(pDest + i) = *(pSource + i);
+        }
+    }
+
+    constexpr void MemSet(char* pDest, char iByte, size_t iLen) {
+        for(size_t i = 0; i < iLen; i++) {
+            *(pDest + i) = iByte;
+        }
+    }
+
+    constexpr size_t StringLen(const char* sData) {
+        for(size_t i = 0;;i++) {
+            if(*(sData + i) == '\0') {
+                return i;
+            }
+        }
+    }
+
+    constexpr int StringCmp(const char* sFirst, const char* sSecond) {
+        while (*sFirst != '\0' && *sFirst == *sSecond) {
+            ++sFirst;
+            ++sSecond;
+        }
+
+        return (int)*sFirst - (int)*sSecond;
+    }
+
+    constexpr int StringCmp(const char* sFirst, const char* sSecond, size_t iMaxChars) {
+        for(size_t i = 0; i < iMaxChars; i++) {
+            const char c1 = *sFirst;
+            const char c2 = *sSecond;
+
+            if(c1 == '\0' || c1 != c2) {
+                return (int)c1 - (int)c2;
+            }
+
+            ++sFirst; ++sSecond;
+        }
+
+        return 0;
+    }
+
+    constexpr const char* StringChr(const char* sHay, char iNeedle) {
+        while(*sHay != '\0') {
+            if(*sHay == iNeedle) { return sHay; }
+
+            ++sHay;
+        }
+
+        return NULL;
+    }
+
+    constexpr const char* StringStr(const char* sHay, const char* sNeedle) {
+        const size_t iNeedleLen = StringLen(sNeedle);
+
+        while(*sHay != '\0') {
+            if( StringCmp(sHay, sNeedle, iNeedleLen) == 0 ) {
+                return sHay;
+            }
+
+            ++sHay;
+        }
+
+        return NULL;
+    }
+
+    /*
         Constant compile-time string wrapper.
         Has operators overloaded and can be used in containers.
     */
     class CConstString {
-        const char* m_sData;
+        const char* m_sData = NULL;
         public:
-            CConstString();
-            CConstString(const char* sData);
+            constexpr CConstString() = default;
+            constexpr CConstString(const char* sData);
 
-            bool operator<(const char* sOther) const;
-            bool operator==(const char* sOther) const;
-            bool operator>(const char* sOther) const;
+            constexpr bool operator<(const char* sOther) const;
+            constexpr bool operator==(const char* sOther) const;
+            constexpr bool operator>(const char* sOther) const;
 
-            size_t Length() const;
+            constexpr size_t Length() const;
 
-            const char* String() const;
-            operator cstring_t() const;
+            constexpr const char* Find(const char* pSubstr) const;
+            constexpr const char* Find(char iChar) const;
 
-            operator bool() const;
+            constexpr const char* String() const;
+            constexpr operator cstring_t() const;
+
+            constexpr operator bool() const;
     };
 
     /*

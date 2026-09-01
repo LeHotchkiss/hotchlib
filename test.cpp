@@ -1,7 +1,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#define TEST_CARRAY
+//#define TEST_CARRAY
 //#define TEST_CBINTABLE
 //#define TEST_CSTACK
 //#define TEST_STATIC_ARRAY
@@ -123,7 +123,11 @@ int main(int argc, char** argv) {
 
     #ifdef TEST_STATIC_ARRAY
     {
-        hlib::static_array_t<int, 25> test(0);
+        hlib::static_array_t<int, 5> test(1,2,3,4,5);
+
+        for(size_t i = 0; i < test.Length(); i++) {
+            printf("[%d] = %d\n", i, test[i]);
+        }
     }
     #endif
 
@@ -139,9 +143,12 @@ int main(int argc, char** argv) {
 
         printf("Test 1:\n\t'%s'\n", test1.String());
         printf("Test 2:\n\t'%s'\n", test2.String());
+
+        const char* s1 = hlib::StringStr("this is a long string with a lot of words", "string");
+        const char* s2 = hlib::StringStr("this is a long string with a lot of words", "nothing!");
+
+        puts(s1 ? s1 : "(null)");
+        puts(s2 ? s2 : "(null)");
     }
     #endif
-
-    /*CDum* pTestDum = hlib::New<CDum>(52);
-    hlib::Delete(pTestDum);*/
 }
