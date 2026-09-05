@@ -1,7 +1,14 @@
-Since is was clearly established that using 3rd-party frameworks is lame af,
-this library shall exist.
+Personal library of the almighty Hotchkiss
 
-It provides basic RAII-tomfoolery-aware containers and supports custom 
-allocators. Originally it was an integral part of the Bitum game engine, 
-but i, in my endless wisdom, have decided to separate it to allow usage in 
-other projects.
+Provides basic RAII-aware container classes.
+(Because i don`t like using STL)
+
++ Has no dependencies, except for C/C++ runtime libraries
++ Does not use exceptions at all
++ Supports allocator replacement, defaults to C`s malloc
++ Minumum bloat
+
+All containers` access works like this:
+The indexing operator[] is a direct access without any sanity checks.
+The 'At' method does the same, but is 'safe' in a way that it won`t segfault
+if you do a mistake, at the cost of performing some checks.

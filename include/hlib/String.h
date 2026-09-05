@@ -20,7 +20,7 @@ namespace hlib {
 
     /*
         Constexpr versions for some of <string.h> functions.
-        For non-constexpr usage better use standart calls.
+        For non-constexpr usage better use standart C calls.
     */
 
     constexpr void MemCopy(char* pDest, const char* pSource, size_t iLen) {
@@ -288,6 +288,10 @@ namespace hlib {
                 return m_iLength;
             }
 
+            void Clear() {
+                Nullify();
+            }
+
             void Set(const CString& sData) {
                 m_iLength = sData.m_iLength;
 
@@ -322,7 +326,7 @@ namespace hlib {
                     memset(m_sData + m_iLength, iLength-m_iLength, ' ');
                 }
 
-                m_sData[iLength+1] = '\0';
+                m_sData[iLength] = '\0';
                 m_iLength = iLength;
             }
             
@@ -386,7 +390,7 @@ namespace hlib {
 
                 va_end(argsCopy);
 
-                this->Resize(iLen);
+                this->Resize(iLen+1);
                 return vsnprintf(m_sData, m_iLength, sFormat, Args);
             }
             
@@ -401,7 +405,7 @@ namespace hlib {
 
                 va_end(argsCopy);
 
-                this->Resize(iLen);
+                this->Resize(iLen+1);
 
                 size_t iLn = vsnprintf(m_sData, m_iLength, sFormat, Args);
 
