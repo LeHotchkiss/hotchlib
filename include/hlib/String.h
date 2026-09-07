@@ -98,24 +98,28 @@ namespace hlib {
     class CConstString {
         const char* m_sData = NULL;
         public:
-            constexpr CConstString() = default;
-            constexpr CConstString(const char* sData);
+            constexpr CConstString(const char* sData) : m_sData(sData) {}
 
-            constexpr bool operator<(const char* sOther) const;
-            constexpr bool operator==(const char* sOther) const;
-            constexpr bool operator>(const char* sOther) const;
+            constexpr bool operator<(const char* sOther) const { return StringCmp(m_sData, sOther) < 0; }
+            constexpr bool operator==(const char* sOther) const { return StringCmp(m_sData, sOther) == 0; }
+            constexpr bool operator>(const char* sOther) const { return StringCmp(m_sData, sOther) > 0; }
 
-            constexpr size_t Length() const;
+            constexpr size_t Length() const { return StringLen(m_sData); }
 
-            constexpr const char* Find(const char* pSubstr) const;
-            constexpr const char* Find(char iChar) const;
+            constexpr const char* String() const { return m_sData; }
+            constexpr operator cstring_t() const { return m_sData; }
 
-            constexpr const char* String() const;
-            constexpr operator cstring_t() const;
+            constexpr operator bool() const { return m_sData != NULL; }
 
-            constexpr operator bool() const;
+            constexpr const char* Find(const char* sSubstr) const {
+                return StringStr(m_sData, sSubstr);
+            }
+
+            constexpr const char* Find(char iChar) const {
+                return StringChr(m_sData, iChar);
+            }
     };
-
+    
     /*
         A regular string. Has it`s length cached, so if you
         have done something nasty with the data you must recache it
