@@ -3,7 +3,7 @@
 NAME="libhotch.a"
 
 CC="g++"
-CC_ARGS="-std=c++17 -O2 -fno-exceptions"
+CC_ARGS="-std=c++17 -g3 -fno-exceptions"
 LD_ARGS="-shared"
 
 FILES=$(find . -maxdepth 1 -name "*.cpp")

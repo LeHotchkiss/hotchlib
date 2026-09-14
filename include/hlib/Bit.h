@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-namespace cbpp {
+namespace hlib {
     bool HasZeroBits(uint64_t iNum);
 
 	template <typename int_t> bool TestBitmask(int_t word, int_t bmask){

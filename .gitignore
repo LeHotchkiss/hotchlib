@@ -2,3 +2,4 @@ libtest
 *.a
 *.so
 src/out/*
+test.txt

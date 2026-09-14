@@ -3,6 +3,7 @@
 
 #include <type_traits>
 #include <utility>
+#include <new>
 
 #include "Allocator.h"
 

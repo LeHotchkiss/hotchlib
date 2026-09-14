@@ -5,7 +5,8 @@
 //#define TEST_CBINTABLE
 //#define TEST_CSTACK
 //#define TEST_STATIC_ARRAY
-#define TEST_CSTRING
+//#define TEST_CSTRING
+#define TEST_FS
 
 #ifdef TEST_CARRAY
     #include "hlib/Array.h"
@@ -26,6 +27,10 @@
 
 #ifdef TEST_CSTRING
     #include "hlib/String.h"
+#endif
+
+#ifdef TEST_FS
+    #include "hlib/Filesystem.h"
 #endif
 
 #include "hlib/New.h"
@@ -149,6 +154,20 @@ int main(int argc, char** argv) {
 
         puts(s1 ? s1 : "(null)");
         puts(s2 ? s2 : "(null)");
+    }
+    #endif
+
+    #ifdef TEST_FS
+    {
+        hlib::IFile* file = hlib::FileOpen("test.txt", hlib::EFileMode::Write);
+        const char* data = "hello from Hotchlib FS API! :)\n";
+        file->Write((void*)data, strlen(data));
+        hlib::FileClose(file);
+
+        file = hlib::FileOpen("test.txt", hlib::EFileMode::Append);
+        const char* data2 = "unpopular opinion, but this is a second string\n";
+        file->Write((void*)data2, strlen(data2));
+        hlib::FileClose(file);
     }
     #endif
 }
