@@ -2,6 +2,10 @@
 #define HOTCHLIB_API_FILESYSTEM_H
 
 #include <stddef.h>
+#include <stdint.h>
+
+#include "hlib/Array.h"
+#include "hlib/String.h"
 
 namespace hlib {
     /*
@@ -10,9 +14,9 @@ namespace hlib {
     */
 
     namespace EFileMode {
-        constexpr static int Read   = 1 << 0;
-        constexpr static int Write  = 1 << 1;
-        constexpr static int Append = 1 << 2;
+        constexpr static const int Read   = 1 << 0;
+        constexpr static const int Write  = 1 << 1;
+        constexpr static const int Append = 1 << 2;
     }
 
     enum class EFilePos : int {
@@ -47,6 +51,27 @@ namespace hlib {
 
     IFile* FileOpen(const char*, int);
     void FileClose(IFile*);
+
+    struct SDirEntry {
+        bool isFile;
+        string_t path;
+    };
+
+    struct SFileInfo {
+        bool exists = false;
+        uint64_t size = 0;
+        
+        struct {
+            uint64_t secs;
+            uint64_t nsecs;
+        } accessTime, modifTime;
+    };
+
+    using CDirContent = array_t<SDirEntry>;
+
+    void GetDirContents(const char*, CDirContent&);
+
+    SFileInfo GetFileInfo(const char*);
 }
 
 #endif

@@ -24,7 +24,11 @@ namespace hlib {
 			if(i % 8 == 0) {
 				putc(' ', stdout);
 			}
-			printf("%u", GetBit<int_t>(word, 8-i-1) ? 1 : 0 );
+			putc(GetBit<int_t>(word, 8-i-1) ? '1' : '0', stdout);
+            
+            if(i % 8 == 0 && i != sizeof(word)-1) {
+                putc('\'', stdout);
+            }
 		}
 	}
 }

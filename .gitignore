@@ -3,3 +3,4 @@ libtest
 *.so
 src/out/*
 test.txt
+.cbb/*

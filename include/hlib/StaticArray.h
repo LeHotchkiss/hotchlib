@@ -2,13 +2,14 @@
 #define HOTCHLIB_API_STATIC_ARRAY_H
 
 #include <stddef.h>
-#include <string.h>
 
 #include <utility>
 
 namespace hlib {
     template <typename value_t, size_t t_iLength>
     class CStaticArray {
+        static_assert(t_iLength > 0, "Static array length must be greater then zero");
+
         value_t m_aData[t_iLength];
 
         using this_t = CStaticArray<value_t, t_iLength>;
@@ -17,7 +18,7 @@ namespace hlib {
             constexpr CStaticArray() = default;
 
             template <typename... args_t>
-            constexpr CStaticArray(args_t&&... args) : m_aData{std::move(args)...} {
+            constexpr CStaticArray(args_t&&... args) : m_aData{ std::forward<args_t>(args)... } {
                 static_assert(sizeof...(args) == t_iLength, "Wrong number of static array arguments");
             }
             
@@ -25,28 +26,6 @@ namespace hlib {
                 for(size_t i = 0; i < t_iLength; i++) {
                     m_aData[i] = filler;
                 }
-            }
-
-            constexpr CStaticArray(const this_t& other) {
-                for(size_t i = 0; i < t_iLength; i++) {
-                    m_aData[i] = other[i];
-                }
-            }
-
-            constexpr CStaticArray(this_t&& other) {
-                memcpy(m_aData, other.m_aData, sizeof(m_aData));
-                memset(other.m_aData, 0, sizeof(other.m_aData));
-            }
-
-            constexpr this_t& operator=(const this_t& other) {
-                for(size_t i = 0; i < t_iLength; i++) {
-                    m_aData[i] = other[i];
-                }
-            }
-
-            constexpr this_t& operator=(this_t&& other) {
-                memcpy(m_aData, other.m_aData, sizeof(m_aData));
-                memset(other.m_aData, 0, sizeof(other.m_aData));
             }
             
             constexpr value_t& operator[](size_t index) {

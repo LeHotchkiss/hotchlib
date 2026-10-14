@@ -185,9 +185,8 @@ namespace hlib {
                     new(&m_pMemory[m_iSize]) value_t(std::move(Value));
                 } else {
                     memcpy(&m_pMemory[m_iSize], &Value, sizeof(Value));
+                    memset(&Value, 0, sizeof(Value));
                 }
-
-                memset(&Value, 0, sizeof(Value)); // Reset the moved object
 
                 return m_iSize++;
             }

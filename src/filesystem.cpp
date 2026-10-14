@@ -6,6 +6,13 @@
 
 #include "Bit.h"
 #include "New.h"
+#include "System.h"
+
+#if defined(HLIB_LINUX)
+    #include <sys/stat.h>
+#elif defined(HLIB_WINDOWS)
+    #include <windows.h>
+#endif
 
 namespace hlib {
     class CFile : public IFile {
@@ -94,7 +101,9 @@ namespace hlib {
     IFile* FileOpen(const char* path, int mode) {
         CFile* file = New<CFile>();
 
-        file->Open(path, mode);
+        if(!file->Open(path, mode)) {
+            return NULL;
+        }
 
         return (IFile*)file;
     }
@@ -103,4 +112,30 @@ namespace hlib {
         file->Close();
         Delete<CFile>((CFile*)file);
     }
+
+    #if defined(HLIB_LINUX)
+    SFileInfo GetFileInfo(const char* path) {
+        struct stat64 info;
+        SFileInfo out;
+
+        int code = stat64(path, &info);
+        if(code != 0) {
+            return out;
+        }
+
+        out.exists = true;
+        out.size = info.st_size;
+
+        out.accessTime.secs = info.st_atim.tv_sec;
+        out.accessTime.nsecs = info.st_atim.tv_nsec;
+        out.modifTime.secs = info.st_mtim.tv_sec;
+        out.modifTime.nsecs = info.st_mtim.tv_nsec;
+
+        return out;
+    }
+    #endif
+
+    #if defined(HLIB_WINDOWS)
+        static_assert(false, "W*ndows version is not implemented");
+    #endif
 }
