@@ -38,6 +38,13 @@ targets {
         out "libhotch.a"
     }
 
+    main_pic {
+        concat "targets.main"
+
+        cc_args ["-fPIC"]
+        out "libhotch.pic.a"
+    }
+
     shared {
         concat "targets.main"
         
