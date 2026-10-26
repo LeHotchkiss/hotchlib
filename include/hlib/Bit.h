@@ -1,5 +1,5 @@
-#ifndef CBPP_BITWORK_H
-#define CBPP_BITWORK_H
+#ifndef HOTCHLIB_API_BITWORK_H
+#define HOTCHLIB_API_BITWORK_H
 
 #include <stdint.h>
 #include <stdio.h>

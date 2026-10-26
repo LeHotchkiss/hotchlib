@@ -35,6 +35,8 @@ targets {
             "src/*.cpp"
         ]
 
+        cc_args ["-g3"]
+
         out "libhotch.a"
     }
 
@@ -50,5 +52,33 @@ targets {
         
         class "shared"
         out "libhotch.so"
+    }
+
+    test {
+        concat "base_target"
+
+        depends [
+            "main"
+        ]
+
+        class "exe"
+
+        includes [
+            "." "src" "include/hlib"
+            "include"
+        ]
+
+        source [
+            "test.cpp"
+        ]
+
+        cc_args ["-g3"]
+
+        lib ["."]
+        link [
+            "libhotch.a"
+        ]
+
+        out "libtest"
     }
 }

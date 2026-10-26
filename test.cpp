@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdio.h>
+#include <assert.h>
 
 //#define TEST_CARRAY
 //#define TEST_CBINTABLE
@@ -31,6 +32,7 @@
 
 #ifdef TEST_FS
     #include "hlib/Filesystem.h"
+    #include "hlib/Print.h"
 #endif
 
 #include "hlib/New.h"
@@ -63,6 +65,12 @@ class CDum {
         ~CDum() {
         }
 };
+
+size_t PrintImpl(hlib::IFile* s, const CDum& data) {
+    const char* d = "dum";
+    size_t bytes = s->Write((void*)d, strlen(d));
+    return (bytes > 0) ? bytes : 0;
+}
 
 int main(int argc, char** argv) {
     //  CArray
@@ -160,14 +168,21 @@ int main(int argc, char** argv) {
     #ifdef TEST_FS
     {
         hlib::IFile* file = hlib::FileOpen("test.txt", hlib::EFileMode::Write);
+        assert(file);
         const char* data = "hello from Hotchlib FS API! :)\n";
         file->Write((void*)data, strlen(data));
         hlib::FileClose(file);
 
-        file = hlib::FileOpen("test.txt", hlib::EFileMode::Append);
+        file = hlib::FileOpen("test.txt", hlib::EFileMode::Append | hlib::EFileMode::Write);
+        assert(file);
         const char* data2 = "unpopular opinion, but this is a second string\n";
         file->Write((void*)data2, strlen(data2));
         hlib::FileClose(file);
+
+        hlib::OutStream->Write((void*)data2, strlen(data2));
+
+        CDum dumm;
+        hlib::Print(hlib::OutStream, "hello ", "world!\n", dumm, "\n", 52, " ", 1.45, "\n");
     }
     #endif
 }
