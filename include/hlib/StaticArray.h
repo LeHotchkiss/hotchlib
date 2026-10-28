@@ -8,7 +8,7 @@
 namespace hlib {
     template <typename value_t, size_t t_iLength>
     class CStaticArray {
-        static_assert(t_iLength > 0, "Static array length must be greater then zero");
+        static_assert(t_iLength > 0, "Static array length must be greater than zero");
 
         value_t m_aData[t_iLength];
 

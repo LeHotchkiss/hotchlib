@@ -4,9 +4,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "hlib/Array.h"
-#include "hlib/String.h"
-
 namespace hlib {
     /*
         Mimic the enum behaviour, because Retard++ can`t perform implicit
@@ -23,6 +20,16 @@ namespace hlib {
         Current,
         Start,
         End
+    };
+
+    struct SFileInfo {
+        bool exists = false;
+        uint64_t size = 0;
+        
+        struct {
+            uint64_t secs;
+            uint64_t nsecs;
+        } accessTime, modifTime;
     };
     
     class IFile {
@@ -42,33 +49,14 @@ namespace hlib {
 
             virtual size_t Write(void*, size_t) = 0;
             virtual size_t Read(void*, size_t) = 0;
+
+            virtual SFileInfo GetInfo() const = 0;
     };
 
     extern IFile *OutStream, *InStream;
 
     IFile* FileOpen(const char*, int);
     void FileClose(IFile*);
-
-    struct SDirEntry {
-        bool isFile;
-        string_t path;
-    };
-
-    struct SFileInfo {
-        bool exists = false;
-        uint64_t size = 0;
-        
-        struct {
-            uint64_t secs;
-            uint64_t nsecs;
-        } accessTime, modifTime;
-    };
-
-    using CDirContent = array_t<SDirEntry>;
-
-    void GetDirContents(const char*, CDirContent&);
-
-    SFileInfo GetFileInfo(const char*);
 }
 
 #endif

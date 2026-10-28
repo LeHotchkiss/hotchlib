@@ -14,7 +14,7 @@
 namespace hlib {
     IFile *InStream, *OutStream;
 
-    class CFile : public IFile {
+    class CFile final : public IFile {
         int m_fd = -1;
         public:
             bool Open(const char* sPath, int iModes) override {
@@ -95,9 +95,30 @@ namespace hlib {
             size_t Read(void* data, size_t bytes) override {
                 return (size_t)read(m_fd, data, bytes);
             }
+            
+            SFileInfo GetInfo() const override {
+                SFileInfo out;
+                struct stat64 info;
+
+                int code = fstat64(m_fd, &info);
+
+                if(code < 0) {
+                    return out;
+                }
+
+                out.exists = (m_fd >= 0);
+                out.size = info.st_size;
+
+                out.accessTime.secs = info.st_atim.tv_sec;
+                out.accessTime.nsecs = info.st_atim.tv_nsec;
+                out.modifTime.secs = info.st_mtim.tv_sec;
+                out.modifTime.nsecs = info.st_mtim.tv_nsec;
+
+                return out;
+            }
     };
 
-    class CInStream : public IFile {
+    class CInStream final : public IFile {
         public:
             bool Open(const char* sPath, int iModes) override {
                 return false;
@@ -142,9 +163,13 @@ namespace hlib {
             size_t Read(void* data, size_t bytes) override {
                 return (size_t)read(STDIN_FILENO, data, bytes);
             }
+
+            SFileInfo GetInfo() const override {
+                return {};
+            }
     };
 
-    class COutStream : public IFile {
+    class COutStream final : public IFile {
         public:
             bool Open(const char* sPath, int iModes) override {
                 return false;
@@ -182,27 +207,11 @@ namespace hlib {
             size_t Read(void* data, size_t bytes) override {
                 return 0;
             }
+
+            SFileInfo GetInfo() const override {
+                return {};
+            }
     };
-
-    SFileInfo GetFileInfo(const char* path) {
-        struct stat64 info;
-        SFileInfo out = {0};
-
-        int code = stat64(path, &info);
-        if(code != 0) {
-            return out;
-        }
-
-        out.exists = true;
-        out.size = info.st_size;
-
-        out.accessTime.secs = info.st_atim.tv_sec;
-        out.accessTime.nsecs = info.st_atim.tv_nsec;
-        out.modifTime.secs = info.st_mtim.tv_sec;
-        out.modifTime.nsecs = info.st_mtim.tv_nsec;
-
-        return out;
-    }
 
     static class CStreamsRegistrator {
         CInStream m_in;

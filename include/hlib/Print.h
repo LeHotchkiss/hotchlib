@@ -7,6 +7,11 @@
 #include "print_impl.h"
 
 namespace hlib {
+    struct FMT {
+        int precision = -1;
+        int length = -1;
+    };
+
     template <typename... args_t> 
     size_t Print(IFile* stream, const args_t&... args) {
         size_t bytes = 0;
