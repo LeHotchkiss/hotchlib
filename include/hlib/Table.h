@@ -99,6 +99,13 @@ namespace hlib {
             /*
                 Direct index access with O(1) complexity
             */
+            const key_t& IndexKey(size_t iIndex) const {
+                return this->m_pMemory[iIndex].Key;
+            }
+
+            /*
+                Direct index access with O(1) complexity
+            */
             const value_t& Index(size_t iIndex) const {
                 return this->m_pMemory[iIndex].Value;
             }
