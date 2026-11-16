@@ -8,7 +8,6 @@
 
 #include <fcntl.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 
 namespace hlib {
@@ -16,6 +15,7 @@ namespace hlib {
 
     class CFile final : public IFile {
         int m_fd = -1;
+
         public:
             bool Open(const char* sPath, int iModes) override {
                 const bool read     = TestBitmask<int>(iModes, EFileMode::Read);
@@ -81,11 +81,11 @@ namespace hlib {
             }
             
             size_t GetPos() const override {
-                return lseek64(m_fd, SEEK_CUR, 0);
+                return lseek64(m_fd, 0, SEEK_CUR);
             }
 
             void Rewind() override {
-                lseek64(m_fd, SEEK_SET, 0);
+                lseek64(m_fd, 0, SEEK_SET);
             }
 
             size_t Write(void* data, size_t bytes) override {
@@ -237,7 +237,8 @@ namespace hlib {
 
     void FileClose(IFile* file) {
         file->Close();
-        Delete<CFile>((CFile*)file);
+        
+        g_defaultAlloc.Free(file);
     }
 }
 
